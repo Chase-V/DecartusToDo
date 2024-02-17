@@ -31,7 +31,7 @@ fun TodoCard(
 
     ) {
         Row(
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
@@ -43,7 +43,13 @@ fun TodoCard(
                 size = 40.dp,
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = taskText, maxLines = 2, modifier = Modifier.weight(1f, fill = false))
+            Text(
+                text = taskText,
+                maxLines = 2,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .fillMaxWidth()
+            )
             Spacer(modifier = Modifier.width(8.dp))
             StarCheckbox(
                 isChecked = isImportantChecked,

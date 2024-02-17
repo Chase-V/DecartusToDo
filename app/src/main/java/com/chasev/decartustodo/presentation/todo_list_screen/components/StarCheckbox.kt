@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 fun StarCheckbox(
     modifier: Modifier = Modifier,
     isChecked: Boolean,
-    isEnabled: Boolean = true,
+    isEnabled: Boolean = false,
     onCheckedChanged: (Boolean) -> Unit,
     checkedColor: Color = MaterialTheme.colorScheme.onSurface,
     uncheckedColor: Color = MaterialTheme.colorScheme.surface,

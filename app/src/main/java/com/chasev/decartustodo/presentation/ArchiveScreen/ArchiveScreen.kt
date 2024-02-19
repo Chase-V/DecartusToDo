@@ -1,4 +1,4 @@
-package com.chasev.decartustodo.presentation.todo_list_screen
+package com.chasev.decartustodo.presentation.ArchiveScreen
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
@@ -10,14 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -42,24 +39,28 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoListScreen(
+fun ArchiveScreen(
     modifier: Modifier = Modifier,
-    addTask: () -> Unit,
-    editTask: (String) -> Unit,
-    onNavigateToArchivePressed: () -> Unit,
-    viewModel: TodoListViewModel = koinViewModel<TodoListViewModel>(),
+    viewModel: ArchiveScreenViewModel = koinViewModel<ArchiveScreenViewModel>(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showDeleteDialog by rememberSaveable {
-        mutableStateOf(emptyList<TodoTask>())
-    }
 
-    var showAddSampleDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
     var showCompleteDialog by rememberSaveable {
         mutableStateOf(emptyList<TodoTask>())
     }
+    var showDeleteDialog by rememberSaveable {
+        mutableStateOf("")
+    }
+    var showUndeleteDialog by rememberSaveable {
+        mutableStateOf(emptyList<TodoTask>())
+    }
+    var showDeleteAllCompletedAndDeletedDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showDeleteAllDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -69,26 +70,15 @@ fun TodoListScreen(
                     Text(text = "DecartusToDo")
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToArchivePressed) {
-                        Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                    IconButton(onClick = { showDeleteAllCompletedAndDeletedDialog = true }) {
+                        Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
-                    IconButton(onClick = { showAddSampleDialog = true }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.List,
-                            contentDescription = null
-                        )
+                    IconButton(onClick = { showDeleteAllDialog = true }) {
+                        Icon(imageVector = Icons.Default.Warning, contentDescription = null)
                     }
-                })
+                }
+            )
         },
-        floatingActionButton = {
-            FloatingActionButton(onClick = addTask) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_task)
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End
     ) { scaffoldPaddingValues ->
         Column(modifier = Modifier.padding(scaffoldPaddingValues)) {
             if (uiState.isLoading) {
@@ -99,7 +89,7 @@ fun TodoListScreen(
             if (uiState.tasks.isEmpty()) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(
-                        text = stringResource(R.string.empty_list_text),
+                        text = stringResource(R.string.empty_archive_text),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -116,9 +106,9 @@ fun TodoListScreen(
                             onCheckedChanged = {
                                 showCompleteDialog = listOf(item)
                             },
-                            onImportantChanged = { viewModel.updateTask(item.copy(isImportant = !item.isImportant)) },
-                            onCardClick = { editTask(item.taskId!!) },
-                            onCardLongClick = { showDeleteDialog = listOf(item) },
+                            onImportantChanged = { },
+                            onCardClick = { showUndeleteDialog = listOf(item) },
+                            onCardLongClick = { showDeleteDialog = item.taskId!! },
                             whenTask = item.whenDate
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -127,39 +117,61 @@ fun TodoListScreen(
 
             }
 
-            if (showAddSampleDialog) {
-                ShowDialog(
-                    onConfirmClick = { viewModel.addSampleTasks(); showAddSampleDialog = false },
-                    onDismiss = { showAddSampleDialog = false },
-                    dialogText = "Добавить 5 задач для примера?"
-                )
-            }
-
-            if (showDeleteDialog.isNotEmpty()) {
-                ShowDialog(
-                    onConfirmClick = {
-                        viewModel.updateTask(
-                            showDeleteDialog.first()
-                                .copy(isDeleted = !showDeleteDialog.first().isDeleted)
-                        )
-                        showDeleteDialog = emptyList()
-                    },
-                    onDismiss = { showDeleteDialog = emptyList() },
-                    dialogText = "Поместить задачу в архив?"
-                )
-            }
-
             if (showCompleteDialog.isNotEmpty()) {
                 ShowDialog(
                     onConfirmClick = {
                         viewModel.updateTask(
                             showCompleteDialog.first()
                                 .copy(isComplete = !showCompleteDialog.first().isComplete)
-                        )
-                        showCompleteDialog = emptyList()
+                        ); showCompleteDialog = emptyList()
                     },
                     onDismiss = { showCompleteDialog = emptyList() },
-                    dialogText = "Пометить задачу выполненной и поместить в архив?"
+                    dialogText = "Вернуть задачу из архива?"
+                )
+            }
+
+            if (showUndeleteDialog.isNotEmpty()) {
+                com.chasev.decartustodo.presentation.todo_list_screen.ShowDialog(
+                    onConfirmClick = {
+                        viewModel.updateTask(
+                            showUndeleteDialog.first()
+                                .copy(isDeleted = false, isComplete = false)
+                        )
+                        showUndeleteDialog = emptyList()
+                    },
+                    onDismiss = { showUndeleteDialog = emptyList() },
+                    dialogText = "Вернуть задачу в актуальные?"
+                )
+            }
+
+            if (showDeleteDialog.isNotEmpty()) {
+                com.chasev.decartustodo.presentation.todo_list_screen.ShowDialog(
+                    onConfirmClick = {
+                        viewModel.deleteTask(showDeleteDialog)
+                        showDeleteDialog = ""
+                    },
+                    onDismiss = { showDeleteDialog = "" },
+                    dialogText = "Навсегда удалить задачу?"
+                )
+            }
+
+            if (showDeleteAllCompletedAndDeletedDialog) {
+                com.chasev.decartustodo.presentation.todo_list_screen.ShowDialog(
+                    onConfirmClick = {
+                        viewModel.deleteCompletedAndDeleted(); showDeleteAllCompletedAndDeletedDialog =
+                        false
+                    },
+                    onDismiss = { showDeleteAllCompletedAndDeletedDialog = false },
+                    dialogText = "Удалить ВСЕ выполненные и удаленные задачи?"
+                )
+            }
+            if (showDeleteAllDialog) {
+                com.chasev.decartustodo.presentation.todo_list_screen.ShowDialog(
+                    onConfirmClick = {
+                        viewModel.deleteAll(); showDeleteAllDialog = false
+                    },
+                    onDismiss = { showDeleteAllDialog = false },
+                    dialogText = "Удалить абсолютно ВСЕ задачи?"
                 )
             }
 

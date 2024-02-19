@@ -9,8 +9,11 @@ interface RoomRepository {
     fun getTaskFlow(taskId: String): Flow<WorkResult<TodoTask?>>
     fun getListOfTasksFlow(): Flow<WorkResult<List<TodoTask>>>
     fun getSortedListOfTasks(startDate: Date, endDate: Date): Flow<WorkResult<List<TodoTask>>>
+    fun getCompletedAndDeleted():Flow<WorkResult<List<TodoTask>>>
 
     suspend fun addTask(task: TodoTask)
     suspend fun editTask(task: TodoTask)
     suspend fun deleteTask(taskId: String)
+    suspend fun deleteAll()
+    suspend fun deleteCompletedAndDeleted()
 }

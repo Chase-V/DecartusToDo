@@ -11,8 +11,8 @@ import java.util.Date
 @Dao
 interface AppRoomDao {
 
-    @Query("SELECT * FROM todoTasks")
-    fun observeListOfTasks(): Flow<List<TodoTaskEntity>>
+    @Query("SELECT * FROM todoTasks WHERE isComplete = 0 AND isDeleted = 0 ")
+    fun observeCurrentListOfTasks(): Flow<List<TodoTaskEntity>>
 
     @Query("SELECT * FROM todoTasks WHERE taskId = :taskId")
     fun observeTaskById(taskId: String): Flow<TodoTaskEntity?>
@@ -23,6 +23,9 @@ interface AppRoomDao {
         endDate: Date
     ): Flow<List<TodoTaskEntity>>
 
+    @Query("SELECT * FROM todoTasks WHERE isComplete = 1 OR isDeleted = 1")
+    fun getCompletedAndDeleted():Flow<List<TodoTaskEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TodoTaskEntity)
 
@@ -31,6 +34,9 @@ interface AppRoomDao {
 
     @Query("DELETE FROM todoTasks WHERE taskId = :taskId")
     suspend fun deleteTaskById(taskId: String): Int
+
+    @Query("DELETE FROM todoTasks WHERE isComplete = 1 OR isDeleted = 1")
+    suspend fun deleteCompletedAndDeleted()
 
     @Query("DELETE FROM todoTasks")
     suspend fun deleteTasks()

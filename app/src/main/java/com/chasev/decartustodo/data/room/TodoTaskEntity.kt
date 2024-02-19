@@ -3,7 +3,7 @@ package com.chasev.decartustodo.data.room
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.chasev.decartustodo.data.repository.TodoTask
-import java.sql.Timestamp
+import java.util.Date
 import java.util.UUID
 
 @Entity(tableName = "todoTasks")
@@ -12,8 +12,9 @@ data class TodoTaskEntity(
     var taskText: String,
     var isImportant: Boolean,
     var isComplete: Boolean,
-    var whenDate: Timestamp,
-    var createdAt: Timestamp
+    var isDeleted: Boolean,
+    var whenDate: Date?,
+    var createdAt: Date
 ) {
     fun toTodoTask(): TodoTask = TodoTask(
         taskId = taskId,
@@ -30,6 +31,7 @@ fun TodoTask.toTodoTaskEntity(): TodoTaskEntity = TodoTaskEntity(
     taskText = taskText,
     isImportant = isImportant,
     isComplete = isComplete,
+    isDeleted = isDeleted,
     whenDate = whenDate,
     createdAt = createdAt
 )

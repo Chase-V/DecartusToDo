@@ -1,8 +1,11 @@
 package com.chasev.decartustodo.presentation.todo_list_screen.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -22,10 +25,10 @@ import androidx.compose.ui.unit.dp
 fun StarCheckbox(
     modifier: Modifier = Modifier,
     isChecked: Boolean,
-    isEnabled: Boolean = false,
+    isEnabled: Boolean = true,
     onCheckedChanged: (Boolean) -> Unit,
-    checkedColor: Color = MaterialTheme.colorScheme.onSurface,
-    uncheckedColor: Color = MaterialTheme.colorScheme.surface,
+    checkedColor: Color = MaterialTheme.colorScheme.primary,
+    uncheckedColor: Color = Color.Gray,
     size: Dp,
 ) {
 
@@ -40,7 +43,9 @@ fun StarCheckbox(
                 role = Role.Checkbox,
                 onValueChange = onCheckedChanged
             )
-            .size(size),
+            .size(size)
+            .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
+            .border(width = 3.dp, color = starColor, shape = CircleShape),
         tint = starColor
     )
 }

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-//    alias(libs.plugins.kapt)
+    kotlin("kapt")
 }
 
 android {
@@ -62,7 +62,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
-    annotationProcessor(libs.androidx.room.kapt)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.koin.compose)
+    implementation(libs.androidx.navigation.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

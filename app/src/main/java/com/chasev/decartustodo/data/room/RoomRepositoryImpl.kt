@@ -20,7 +20,7 @@ class RoomRepositoryImpl internal constructor(
 
 
     override fun getListOfTasksFlow(): Flow<WorkResult<List<TodoTask>>> =
-        tasksDao.observeListOfTasks().map {
+        tasksDao.observeCurrentListOfTasks().map {
             WorkResult.Success(
                 it.map { todoListEntity ->
                     todoListEntity.toTodoTask()
@@ -37,8 +37,21 @@ class RoomRepositoryImpl internal constructor(
             })
         }
 
+    override fun getCompletedAndDeleted(): Flow<WorkResult<List<TodoTask>>> =
+        tasksDao.getCompletedAndDeleted().map {
+            WorkResult.Success(
+                it.map { todoListEntity ->
+                    todoListEntity.toTodoTask()
+                })
+        }
+
+
     override suspend fun addTask(task: TodoTask) {
-        tasksDao.insertTask(task.toTodoTaskEntity())
+        if (task.taskText.isNullOrEmpty()) {
+            throw Exception("Введите текст заметки")
+        } else {
+            tasksDao.insertTask(task.toTodoTaskEntity())
+        }
     }
 
     override suspend fun editTask(task: TodoTask) {
@@ -47,5 +60,13 @@ class RoomRepositoryImpl internal constructor(
 
     override suspend fun deleteTask(taskId: String) {
         tasksDao.deleteTaskById(taskId)
+    }
+
+    override suspend fun deleteAll() {
+        tasksDao.deleteTasks()
+    }
+
+    override suspend fun deleteCompletedAndDeleted() {
+        tasksDao.deleteCompletedAndDeleted()
     }
 }

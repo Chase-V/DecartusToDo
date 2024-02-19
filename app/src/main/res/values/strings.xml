@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">DecartusToDo</string>
+    <string name="add_task">Add Task</string>
+    <string name="empty_list_text">Здесь пока ничего нет 😔 \n Скорее запланируй! \n Либо воспользуйся кнопкой в аппбаре и добавь 5 заметок для примера!</string>
+    <string name="saving_error">При сохранении произошла ошибка</string>
+    <string name="add_transaction">Добавить задачу</string>
+    <string name="edit_transaction">Редактировать задачу</string>
+    <string name="empty_archive_text">В архиве пока пусто. Здесь будут находиться удаленные и выполненные задачи.</string>
 </resources>

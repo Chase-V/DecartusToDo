@@ -1,12 +1,13 @@
 package com.chasev.decartustodo.data.repository
 
-import java.sql.Timestamp
+import java.util.Date
 
 data class TodoTask(
     val taskId: String? = null,
     val taskText: String,
-    val isImportant: Boolean,
-    val isComplete: Boolean,
-    val whenDate: Timestamp,
-    val createdAt: Timestamp
+    val isImportant: Boolean = false,
+    val isComplete: Boolean = false,
+    val isDeleted: Boolean = false,
+    val whenDate: Date? = null,
+    val createdAt: Date = Date()
 )

@@ -1,22 +1,18 @@
 package com.chasev.decartustodo.presentation.todo_list_screen.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,12 +28,15 @@ fun RoundCheckbox(
     isEnabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit,
     checkedColor: Color = MaterialTheme.colorScheme.primary,
-    uncheckedColor: Color = MaterialTheme.colorScheme.onPrimary,
+    uncheckedColor: Color = Color.Gray,
     size: Dp
 ) {
     val checkboxColor: Color by animateColorAsState(targetValue = if (isChecked) checkedColor else uncheckedColor)
 
-    Box(
+    Icon(
+        imageVector = Icons.Default.CheckCircle,
+        contentDescription = null,
+        tint = checkboxColor,
         modifier = Modifier
             .size(size)
             .clip(shape = CircleShape)
@@ -47,20 +46,8 @@ fun RoundCheckbox(
                 role = Role.Checkbox,
                 onValueChange = onCheckedChange
             )
-            .background(color = checkboxColor)
-            .border(width = 3.dp, color = checkedColor, shape = CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        AnimatedVisibility(visible = isChecked) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = uncheckedColor
-            )
-        }
-
-    }
-
+            .background(color = MaterialTheme.colorScheme.surface)
+    )
 }
 
 @Preview

@@ -21,7 +21,7 @@ fun ListWithBadge(
     itemsList: List<TodoTask>
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Badge(text = badgeText)
+        DayBadge(text = badgeText)
         Spacer(modifier = Modifier.height(8.dp))
         LazyColumn(contentPadding = PaddingValues(8.dp)) {
             items(itemsList) { item ->
@@ -30,7 +30,9 @@ fun ListWithBadge(
                     isImportantChecked = item.isImportant,
                     taskText = item.taskText,
                     onCheckedChanged = { },
-                    onImportantChanged = { }
+                    onImportantChanged = { },
+                    onCardClick = {},
+                    onCardLongClick = {}
                 )
             }
 

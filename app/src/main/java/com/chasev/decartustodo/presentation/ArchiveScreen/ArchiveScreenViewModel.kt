@@ -51,7 +51,7 @@ class ArchiveScreenViewModel(
 
     fun deleteCompletedAndDeleted() {
         viewModelScope.launch {
-            repository.getCompletedAndDeleted()
+            repository.deleteCompletedAndDeleted()
         }
     }
 
